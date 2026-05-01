@@ -1,48 +1,102 @@
 FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=C.UTF-8
+ENV TZ=Asia/Shanghai
 
+# ============================================================
+# 替换为阿里云 apt 源
+# ============================================================
+RUN sed -i 's|http://archive.ubuntu.com|http://mirrors.aliyun.com|g' /etc/apt/sources.list \
+    && sed -i 's|http://security.ubuntu.com|http://mirrors.aliyun.com|g' /etc/apt/sources.list
 
-# 安装必要工具
-RUN apt update && apt install -y \
+# ============================================================
+# 系统基础包 + PWN 工具链
+# ============================================================
+RUN apt-get update && apt-get install -y \
+    # -- 编译工具链 --
     build-essential \
     gcc \
     g++ \
+    gcc-multilib \
+    g++-multilib \
     make \
     cmake \
-    git \
+    nasm \
+    # -- 调试 / 分析 --
+    gdb \
+    gdbserver \
+    ltrace \
+    strace \
+    file \
+    xxd \
+    binutils \
+    elfutils \
+    patchelf \
+    radare2 \
+    # -- 网络工具 --
+    netcat-openbsd \
+    socat \
     curl \
     wget \
+    # -- 编辑 / 终端复用 --
+    git \
     vim \
     nano \
+    tmux \
+    # -- Python3 环境 --
     python3 \
     python3-pip \
     python3-dev \
+    # -- Ruby 环境 (one_gadget 依赖) --
+    ruby \
+    ruby-dev \
+    # -- 32 位调试依赖 --
+    libc6-dev-i386 \
+    libc6-dbg \
+    # -- 其他 --
     sudo \
-    file \
-    ltrace \
-    strace \
-    netcat \
-    socat \
-    gdb \
-    gdbserver \
-    && apt clean
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir \
+# ============================================================
+# pip 阿里云镜像 + Python PWN 工具
+# ============================================================
+RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
+    && pip3 install --no-cache-dir \
     pwntools \
     ropper \
     keystone-engine \
     unicorn \
-    capstone
+    capstone \
+    ROPgadget \
+    z3-solver \
+    pwncli
 
-# 配置 pwndbg 和 Pwngdb 联合调试, 经过我的验证,下面的配置不会冲突
+# ============================================================
+# gem 阿里云镜像 + Ruby PWN 工具
+# ============================================================
+RUN gem sources --remove https://rubygems.org/ \
+    && gem sources -a https://mirrors.aliyun.com/rubygems/ \
+    && gem install one_gadget \
+    && gem install seccomp-tools
+
+# ============================================================
+# pwndbg — GDB 增强插件
+# ============================================================
 RUN git clone https://github.com/pwndbg/pwndbg /opt/pwndbg \
     && cd /opt/pwndbg \
     && ./setup.sh
 
+# ============================================================
+# Pwngdb — 堆分析插件 (与 pwndbg 兼容)
+# ============================================================
 RUN git clone https://github.com/scwuaptx/Pwngdb.git /opt/Pwngdb
 
-RUN cat <<EOF >> /root/.gdbinit
+# ============================================================
+# 配置 GDB 初始化脚本
+# ============================================================
+RUN cat <<'EOF' > /root/.gdbinit
 source /opt/pwndbg/gdbinit.py
 source /opt/Pwngdb/pwngdb.py
 source /opt/Pwngdb/angelheap/gdbinit.py
@@ -55,16 +109,5 @@ end
 end
 EOF
 
-
-# 配置其他工具
-RUN apt install -y \
-    radare2 \
-    binutils \
-    elfutils \
-    && apt clean
-
-
 WORKDIR /ctf
-
-# 默认 bash
 CMD ["/bin/bash"]

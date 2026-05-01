@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  pwn:
+    build: .
+    image: pwn-toolkit:latest
+    container_name: pwn-lab
+    hostname: pwn
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./workspace:/ctf
+    ports:
+      - "1234:1234"   # GDB remote debug
+      - "8888:8888"   # socat / exp remote
+      - "23946:23946" # IDA remote
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=C.UTF-8
+    # 容器启动后保持运行，attach 即可使用
+    entrypoint: ["/bin/bash"]
+    restart: unless-stopped
