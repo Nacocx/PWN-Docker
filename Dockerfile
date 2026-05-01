@@ -82,7 +82,7 @@ RUN git clone https://github.com/pwndbg/pwndbg /opt/pwndbg \
     && ./setup.sh
 
 # ============================================================
-# Pwngdb — 堆分析插件 (与 pwndbg 兼容)
+# Pwngdb — GDB 增强插件 (与 pwndbg 兼容)
 # ============================================================
 RUN git clone https://github.com/scwuaptx/Pwngdb.git /opt/Pwngdb
 

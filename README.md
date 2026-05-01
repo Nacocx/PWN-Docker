@@ -108,9 +108,9 @@ IDA Pro → Debugger → Run → Remote Linux debugger
 ### PWN 核心
 | 工具 | 来源 | 说明 |
 |------|------|------|
-| pwntools | pip | exp 编写框架 |
-| pwndbg | GitHub | GDB 增强插件 |
-| Pwngdb + angelheap | GitHub | 堆分析插件 |
+| pwntools | [GitHub](https://github.com/Gallopsled/pwntools) | exp 编写框架 |
+| pwndbg | [GitHub](https://github.com/pwndbg/pwndbg) | GDB 增强插件 |
+| Pwngdb | [GitHub](https://github.com/scwuaptx/Pwngdb) | GDB 增强插件 |
 
 ### 编译与构建
 | 工具 | 来源 | 说明 |
