@@ -71,8 +71,8 @@ RUN apt-get update && apt-get install -y \
 #     && pip3 install --no-cache-dir \
 #     pwntools 
 
-RUN pip3 install --no-cache-dir \
-    pwntools 
+RUN pip3 install --no-cache-dir --break-system-packages \
+    pwntools
 
 # ============================================================
 # pwndbg — GDB 增强插件
