@@ -1,14 +1,18 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
 ENV TZ=Asia/Shanghai
 
 # ============================================================
-# 替换为阿里云 apt 源
+# 阿里云 apt 源 + 启用 i386 架构
 # ============================================================
-RUN sed -i 's|http://archive.ubuntu.com|http://mirrors.aliyun.com|g' /etc/apt/sources.list \
-    && sed -i 's|http://security.ubuntu.com|http://mirrors.aliyun.com|g' /etc/apt/sources.list
+RUN echo "deb http://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse" > /etc/apt/sources.list \
+    && echo "deb http://mirrors.aliyun.com/ubuntu/ jammy-security main restricted universe multiverse" >> /etc/apt/sources.list \
+    && echo "deb http://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse" >> /etc/apt/sources.list \
+    && echo "deb http://mirrors.aliyun.com/ubuntu/ jammy-proposed main restricted universe multiverse" >> /etc/apt/sources.list \
+    && echo "deb http://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse" >> /etc/apt/sources.list \
+    && dpkg --add-architecture i386
 
 # ============================================================
 # 系统基础包 + PWN 工具链
@@ -33,7 +37,6 @@ RUN apt-get update && apt-get install -y \
     binutils \
     elfutils \
     patchelf \
-    radare2 \
     # -- 网络工具 --
     netcat-openbsd \
     socat \
@@ -62,24 +65,12 @@ RUN apt-get update && apt-get install -y \
 # ============================================================
 # pip 阿里云镜像 + Python PWN 工具
 # ============================================================
-RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
-    && pip3 install --no-cache-dir \
-    pwntools \
-    ropper \
-    keystone-engine \
-    unicorn \
-    capstone \
-    ROPgadget \
-    z3-solver \
-    pwncli
+# RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
+#     && pip3 install --no-cache-dir \
+#     pwntools 
 
-# ============================================================
-# gem 阿里云镜像 + Ruby PWN 工具
-# ============================================================
-RUN gem sources --remove https://rubygems.org/ \
-    && gem sources -a https://mirrors.aliyun.com/rubygems/ \
-    && gem install one_gadget \
-    && gem install seccomp-tools
+RUN pip3 install --no-cache-dir \
+    pwntools 
 
 # ============================================================
 # pwndbg — GDB 增强插件
