@@ -3,6 +3,7 @@ version: "3.8"
 services:
   pwn:
     build: .
+    platform: linux/amd64
     image: pwn-toolkit:latest
     container_name: pwn-lab
     hostname: pwn
