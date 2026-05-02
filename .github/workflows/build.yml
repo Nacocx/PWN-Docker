@@ -3,6 +3,9 @@ name: Build and Push PWN Docker Image
 on:
   push:
     branches: [master, main]
+    paths:
+      - Dockerfile
+      - .github/workflows/build.yml
   workflow_dispatch:
 
 jobs:
