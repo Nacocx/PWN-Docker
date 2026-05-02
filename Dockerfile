@@ -44,6 +44,9 @@ RUN apt-get update && apt-get install -y \
     socat \
     curl \
     wget \
+    # -- Shell --
+    zsh \
+    fzf \
     # -- 编辑 / 终端复用 --
     git \
     vim \
@@ -105,5 +108,23 @@ end
 end
 EOF
 
+# ============================================================
+# Zsh + Starship + 插件
+# ============================================================
+RUN git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions \
+        /root/.zsh-autosuggestions \
+    && git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git \
+        /root/.zsh-syntax-highlighting \
+    && curl -sS https://starship.rs/install.sh | sh -s -- -y
+
+RUN cat <<'EOF' > /root/.zshrc
+source /root/.zsh-autosuggestions/zsh-autosuggestions.zsh
+source /root/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/doc/fzf/completion.zsh
+source /usr/share/doc/fzf/key-bindings.zsh
+
+eval "$(starship init zsh)"
+EOF
+
 WORKDIR /ctf
-CMD ["/bin/bash"]
+CMD ["/bin/zsh"]
