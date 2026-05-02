@@ -59,6 +59,9 @@ RUN apt-get update && apt-get install -y \
     # -- 32 位调试依赖 --
     libc6-dev-i386 \
     libc6-dbg \
+    # -- 多架构模拟 --
+    qemu-user \
+    binfmt-support \
     # -- 其他 --
     sudo \
     && apt-get clean \
