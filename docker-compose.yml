@@ -5,7 +5,7 @@ services:
     build: .
     platform: linux/amd64
     # image: pwn-toolkit:latest locally built image
-    image: ghcr.io/nacocx/pwn-toolkit:d63edd9273922cf1ca29d1c2a17a608e677f3931
+    image: ghcr.io/nacocx/pwn-toolkit:latest
     container_name: pwn-lab
     hostname: pwn
     stdin_open: true
