@@ -3,7 +3,6 @@ version: "3.8"
 services:
   pwn:
     build: .
-    platform: linux/amd64
     # image: pwn-toolkit:latest locally built image
     image: ghcr.io/nacocx/pwn-toolkit:latest
     container_name: pwn-lab
