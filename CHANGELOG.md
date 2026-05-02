@@ -1,5 +1,51 @@
 # PWN Docker 更新日志
 
+## 2026-05-02 — Shell 重构 + 多架构 + 开发体验
+
+### Shell 环境
+
+| 变更 | 旧 | 新 |
+|------|----|----|
+| Shell | bash | zsh |
+| 提示符 | 默认 | Starship (Rust, 毫秒级) |
+| 自动建议 | 无 | zsh-autosuggestions |
+| 语法高亮 | 无 | zsh-syntax-highlighting |
+| 模糊搜索 | 无 | fzf (Ctrl+R/T) |
+
+### 多架构支持
+
+- 新增 `qemu-user` + `binfmt-support`，容器内可直接运行 ARM/MIPS/x86_64 等异构二进制
+
+### GDB 调试修复
+
+- 添加 `cap_add: SYS_PTRACE` + `security_opt: seccomp:unconfined`
+- 移除 `platform: linux/amd64`（Apple Silicon 上强制 amd64 导致 QEMU 模拟，ptrace 穿透失败）
+
+### 管理脚本
+
+- 新增 `PWN-Docker.sh`：start / stop / restart / exec / build / pull / status / logs / remove / help
+- 脚本自动定位 docker-compose.yml，任意路径可执行
+
+### CI 优化
+
+- 添加 `paths` 过滤：仅 `Dockerfile` 或 `build.yml` 变更时触发构建
+- 保留 `workflow_dispatch` 手动触发
+
+### workspace 保护
+
+- 添加 `workspace/.gitignore`，目录保持存在但内容不被 git 追踪
+
+### 文件变更
+
+- `Dockerfile` — 添加 zsh/starship/qemu 等
+- `docker-compose.yml` — 移除 platform、添加 ptrace、entrypoint 切 zsh
+- `PWN-Docker.sh` — 新增
+- `workspace/.gitignore` — 新增
+- `.github/workflows/build.yml` — 添加 paths 过滤
+- `README.md` — 重写
+
+---
+
 ## 2026-05-02 — 基于 CTFTool 参考的全面升级
 
 ### 镜像源切换
