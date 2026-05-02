@@ -20,5 +20,9 @@ services:
       - TZ=Asia/Shanghai
       - LANG=C.UTF-8
     # 容器启动后保持运行，attach 即可使用
-    entrypoint: ["/bin/bash"]
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    entrypoint: ["/bin/zsh"]
     restart: unless-stopped
